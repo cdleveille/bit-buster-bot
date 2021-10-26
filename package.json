@@ -1,0 +1,41 @@
+{
+  "name": "bit-busters-bot",
+  "version": "1.0.0",
+  "description": "",
+  "engines": {
+    "node": "14.x",
+    "npm": "*"
+  },
+  "main": "build/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node-dev --respawn --transpile-only ./src/index.ts",
+    "lint": "eslint --fix --ext .ts,.tsx .",
+    "postinstall": "npm run build",
+    "start": "node ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cdleveille/bit-busters-bot.git"
+  },
+  "keywords": [],
+  "author": "Chris Leveille",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cdleveille/bit-busters-bot/issues"
+  },
+  "homepage": "https://github.com/cdleveille/bit-busters-bot#readme",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "discord.js": "^12.5.1",
+    "dotenv": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/node": "^16.11.6",
+    "@typescript-eslint/parser": "^5.2.0",
+    "eslint": "^8.1.0",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.4.4"
+  }
+}
