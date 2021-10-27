@@ -1,14 +1,15 @@
 import { Message } from "discord.js";
 
 import { replyWithErrorEmbed, replyWithSuccessEmbed } from "../helpers/utility";
-import { CommandsList } from "../types/constants";
+import { Commands } from "../types/constants";
 
 export const help = async (msg: Message): Promise<void> => {
 	try {
 		let output = "";
-		CommandsList.forEach(cmd => {
+
+		for (const cmd of Object.values(Commands)) {
 			output += `**${cmd.prefix}**\n${cmd.description}\n\n`;
-		});
+		}
 
 		replyWithSuccessEmbed(msg, "Commands:", output);
 	} catch (error) {

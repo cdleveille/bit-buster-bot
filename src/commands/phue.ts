@@ -21,7 +21,7 @@ export const lights = async (msg: Message): Promise<void> => {
 				`Brightness: ${Math.max(Math.round(light.state.bri / 2.54), 1)}%\n\n`;
 		});
 
-		replyWithSuccessEmbed(msg, "Lights", output);
+		replyWithSuccessEmbed(msg, "Lights:", output);
 	} catch (error) {
 		replyWithErrorEmbed(msg, error);
 	}
@@ -32,31 +32,40 @@ export const light = async (msg: Message): Promise<void> => {
 		const args: string[] = getCommandArgs(msg, Commands.light.prefix);
 		if (args.length < 2) throw Errors.syntax;
 		const lightId: string = args[0];
-		if (isNaN(parseInt(lightId))) throw "Light id must be an integer!";
+		if (isNaN(parseInt(lightId))) throw Errors.lightID;
 
-		let state: boolean, brightness: number;
+		let state: boolean, brightness: number, brightnessPct: number;
 
 		if (args[1].toLowerCase() === "on") {
 			state = true;
 		} else if (args[1].toLowerCase() == "off") {
 			state = false;
 		} else {
-			brightness = parseInt(args[1]);
-			if (isNaN(brightness) || brightness < 1 || brightness > 100) throw Errors.syntax;
-			brightness = Math.max(Math.round(brightness * 2.54), 1);
+			brightnessPct = parseInt(args[1]);
+			if (isNaN(brightnessPct) || brightnessPct < 1 || brightnessPct > 100) throw Errors.syntax;
+			brightness = Math.max(Math.round(brightnessPct * 2.54), 1);
 		}
 
 		const url: string = `http://${config.PHUE_BRIDGE_IP}/api/${config.PHUE_USERNAME}/lights/${lightId}/state`;
 
 		if (state !== undefined) {
-			return await axios.put(url, {
+			const res = await axios.put(url, {
 				on: state
 			});
+
+			if (res.data[0].error) throw res.data[0].error.description;
+
+			return replyWithSuccessEmbed(msg, "Success", `Light ${lightId} was switched ${state ? "on" : "off"}!`);
+
 		} else if (brightness !== undefined) {
-			return await axios.put(url, {
+			const res = await axios.put(url, {
 				on: true,
 				bri: brightness
 			});
+
+			if (res.data[0].error) throw res.data[0].error.description;
+
+			return replyWithSuccessEmbed(msg, "Success", `Light ${lightId} was set to ${brightnessPct}% brightness!`);
 		}
 	} catch (error) {
 		replyWithErrorEmbed(msg, error);
@@ -65,5 +74,6 @@ export const light = async (msg: Message): Promise<void> => {
 
 /* eslint-disable no-unused-vars */
 enum Errors {
-	syntax = "Invalid command syntax!\n\nUsage: '!light [id] on/off/[brightness]'\n\nBrightness is on a scale from 1 to 100."
+	syntax = "Invalid command syntax!\n\nUsage: '!light [id] on/off/[brightness]'\n\nBrightness is on a scale from 1 to 100.",
+	lightID = "Light ID must be an integer!"
 }

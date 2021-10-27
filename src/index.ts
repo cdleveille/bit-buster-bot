@@ -9,8 +9,9 @@ import { Activities, Commands } from "./types/constants";
 const client: Client = new Client();
 
 client.on("ready", () => {
-	console.log(`Logged in as ${client.user.tag}!`);
+	client.user.setUsername("Bit Buster Bot");
 	client.user.setActivity(Activities.chipsChallenge);
+	console.log(`Logged in as ${client.user.tag}!`);
 });
 
 client.on("message", async (msg: Message) => {

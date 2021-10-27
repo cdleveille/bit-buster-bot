@@ -1,5 +1,5 @@
 {
-  "name": "bit-busters-bot",
+  "name": "bit-buster-bot",
   "version": "1.0.0",
   "description": "",
   "engines": {
@@ -16,15 +16,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cdleveille/bit-busters-bot.git"
+    "url": "git+https://github.com/cdleveille/bit-buster-bot.git"
   },
   "keywords": [],
   "author": "Chris Leveille",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/cdleveille/bit-busters-bot/issues"
+    "url": "https://github.com/cdleveille/bit-buster-bot/issues"
   },
-  "homepage": "https://github.com/cdleveille/bit-busters-bot#readme",
+  "homepage": "https://github.com/cdleveille/bit-buster-bot#readme",
   "dependencies": {
     "axios": "^0.24.0",
     "discord.js": "^12.5.1",
