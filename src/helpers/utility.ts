@@ -14,3 +14,13 @@ export const replyWithErrorEmbed = (msg: Message, error: any): void => {
 	errorEmbed.setDescription(error);
 	msg.reply(errorEmbed);
 };
+
+export const getCommandArgs = (msg: Message, prefix: string): string[] => {
+	let args: string[] = msg.content.slice(prefix.length).trim().split(" ");
+	if (args[0] === "") args.shift();
+	return args;
+};
+
+export const commandRun = (msg: Message, prefix: string): boolean => {
+	return msg.content.includes(prefix);
+};
