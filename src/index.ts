@@ -3,7 +3,7 @@ import { Client, Message } from "discord.js";
 import * as help from "./commands/help";
 import * as phue from "./commands/phue";
 import config from "./helpers/config";
-import { commandRun, replyWithErrorEmbed } from "./helpers/utility";
+import { commandMatch, replyWithErrorEmbed } from "./helpers/utility";
 import { Activities, Commands } from "./types/constants";
 
 const client: Client = new Client();
@@ -18,13 +18,13 @@ client.on("message", async (msg: Message) => {
 		if (msg.author.bot) return;
 
 		switch (true) {
-			case commandRun(msg, Commands.help.prefix):
+			case commandMatch(msg.content, Commands.help.prefix):
 				help.help(msg);
 				break;
-			case commandRun(msg, Commands.lights.prefix):
+			case commandMatch(msg.content, Commands.lights.prefix):
 				phue.lights(msg);
 				break;
-			case commandRun(msg, Commands.light.prefix):
+			case commandMatch(msg.content, Commands.light.prefix):
 				phue.light(msg);
 				break;
 		}

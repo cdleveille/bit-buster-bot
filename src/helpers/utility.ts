@@ -21,6 +21,7 @@ export const getCommandArgs = (msg: Message, prefix: string): string[] => {
 	return args;
 };
 
-export const commandRun = (msg: Message, prefix: string): boolean => {
-	return msg.content.includes(prefix);
+export const commandMatch = (msgContent: string, prefix: string): boolean => {
+	return msgContent.toLowerCase().includes(prefix.toLowerCase()) &&
+		(msgContent.endsWith(prefix) || msgContent.includes(prefix + " "));
 };
