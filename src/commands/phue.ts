@@ -46,27 +46,39 @@ export const light = async (msg: Message): Promise<void> => {
 			brightness = Math.max(Math.round(brightnessPct * 2.54), 1);
 		}
 
+		if (state !== undefined) return await setLightState(msg, lightId, state);
+		if (brightness !== undefined) return await setLightBrightness(msg, lightId, brightness);
+	} catch (error) {
+		replyWithErrorEmbed(msg, error);
+	}
+};
+
+const setLightState = async (msg: Message, lightId: string, state: boolean): Promise<void> => {
+	try {
 		const url: string = `http://${config.PHUE_BRIDGE_IP}/api/${config.PHUE_USERNAME}/lights/${lightId}/state`;
 
-		if (state !== undefined) {
-			const res = await axios.put(url, {
-				on: state
-			});
+		const res: AxiosResponse = await axios.put(url, {
+			on: state
+		});
 
-			if (res.data[0].error) throw res.data[0].error.description;
+		if (res.data[0].error) throw res.data[0].error.description;
+		replyWithSuccessEmbed(msg, "Success", `Light ${lightId} was switched ${state ? "on" : "off"}!`);
+	} catch (error) {
+		replyWithErrorEmbed(msg, error);
+	}
+};
 
-			return replyWithSuccessEmbed(msg, "Success", `Light ${lightId} was switched ${state ? "on" : "off"}!`);
+const setLightBrightness = async (msg: Message, lightId: string, brightness: number): Promise<void> => {
+	try {
+		const url: string = `http://${config.PHUE_BRIDGE_IP}/api/${config.PHUE_USERNAME}/lights/${lightId}/state`;
 
-		} else if (brightness !== undefined) {
-			const res = await axios.put(url, {
-				on: true,
-				bri: brightness
-			});
+		const res: AxiosResponse = await axios.put(url, {
+			on: true,
+			bri: brightness
+		});
 
-			if (res.data[0].error) throw res.data[0].error.description;
-
-			return replyWithSuccessEmbed(msg, "Success", `Light ${lightId} was set to ${brightnessPct}% brightness!`);
-		}
+		if (res.data[0].error) throw res.data[0].error.description;
+		replyWithSuccessEmbed(msg, "Success", `Light ${lightId} was set to ${Math.max(Math.round(brightness / 2.54), 1)}% brightness!`);
 	} catch (error) {
 		replyWithErrorEmbed(msg, error);
 	}

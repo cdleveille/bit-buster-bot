@@ -4,13 +4,13 @@ import * as help from "./commands/help";
 import * as phue from "./commands/phue";
 import config from "./helpers/config";
 import { commandMatch, replyWithErrorEmbed } from "./helpers/utility";
-import { Activities, Commands } from "./types/constants";
+import { Commands } from "./types/constants";
 
 const client: Client = new Client();
 
 client.on("ready", () => {
 	client.user.setUsername("Bit Buster Bot");
-	client.user.setActivity(Activities.chipsChallenge);
+	client.user.setActivity("Chip's Challenge");
 	console.log(`Logged in as ${client.user.tag}!`);
 });
 

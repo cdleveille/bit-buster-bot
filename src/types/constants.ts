@@ -5,10 +5,6 @@ export enum Colors {
 	red = "#ff6666"
 }
 
-export enum Activities {
-	chipsChallenge = "Chip's Challenge"
-}
-
 export const Commands = {
 	help: { prefix: "!help", description: "Show a list of my commands." },
 	lights: { prefix: "!lights", description: "Show the status of all lights." },
