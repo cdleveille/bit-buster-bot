@@ -1,4 +1,4 @@
-# bit-busters-bot
+# bit-buster-bot
 Discord bot written in Node.js/TypeScript.
 
 ## Debugging Locally
