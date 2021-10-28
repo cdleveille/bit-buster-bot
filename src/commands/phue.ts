@@ -9,11 +9,11 @@ export const lights = async (msg: Message): Promise<void> => {
 	try {
 		if (!isPHueConfigured()) throw Errors.pHueNotConfigured;
 
-		let output = "";
-
 		const url = `http://${Config.PHUE_BRIDGE_IP}/api/${Config.PHUE_USERNAME}/lights`;
 		const res = await axios.get(url);
 		if (res.data[0] && res.data[0].error) throw res.data[0].error.description;
+
+		let output = "";
 
 		Object.keys(res.data).forEach(key => {
 			const light = res.data[key];
