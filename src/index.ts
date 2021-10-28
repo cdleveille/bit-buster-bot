@@ -1,8 +1,8 @@
 import { Client, Message } from "discord.js";
 
-import * as help from "./commands/help";
-import * as phue from "./commands/phue";
-import config from "./helpers/config";
+import help from "./commands/help";
+import Config from "./helpers/config";
+import { lights, light } from "./commands/phue";
 import { commandMatch, replyWithErrorEmbed } from "./helpers/utility";
 import { Commands } from "./types/constants";
 
@@ -20,13 +20,13 @@ client.on("message", async (msg: Message) => {
 
 		switch (true) {
 			case commandMatch(msg.content, Commands.help.prefix):
-				help.help(msg);
+				help(msg);
 				break;
 			case commandMatch(msg.content, Commands.lights.prefix):
-				phue.lights(msg);
+				lights(msg);
 				break;
 			case commandMatch(msg.content, Commands.light.prefix):
-				phue.light(msg);
+				light(msg);
 				break;
 		}
 
@@ -35,6 +35,6 @@ client.on("message", async (msg: Message) => {
 	}
 });
 
-client.login(config.BOT_TOKEN).catch(error => {
+client.login(Config.BOT_TOKEN).catch(error => {
 	console.log(error);
 });

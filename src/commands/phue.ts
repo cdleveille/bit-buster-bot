@@ -1,23 +1,25 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { Message } from "discord.js";
 
-import config from "../helpers/config";
+import Config from "../helpers/config";
 import { getCommandArgs, replyWithErrorEmbed, replyWithSuccessEmbed } from "../helpers/utility";
 import { Commands } from "../types/constants";
 
 export const lights = async (msg: Message): Promise<void> => {
 	try {
+		if (!isPHueConfigured()) throw Errors.pHueNotConfigured;
+
 		let output = "";
 
-		const url: string = `http://${config.PHUE_BRIDGE_IP}/api/${config.PHUE_USERNAME}/lights`;
-		const res: AxiosResponse = await axios.get(url);
+		const url = `http://${Config.PHUE_BRIDGE_IP}/api/${Config.PHUE_USERNAME}/lights`;
+		const res = await axios.get(url);
+		if (res.data[0] && res.data[0].error) throw res.data[0].error.description;
 
-		const keys: string[] = Object.keys(res.data);
-		keys.forEach(key => {
+		Object.keys(res.data).forEach(key => {
 			const light = res.data[key];
 			output += `ID: ${key}\n` +
 				`Name: ${light.name}\n` +
-				`On: ${light.state.on}\n` +
+				`State: ${light.state.on ? "ON" : "OFF"}\n` +
 				`Brightness: ${Math.max(Math.round(light.state.bri / 2.54), 1)}%\n\n`;
 		});
 
@@ -29,63 +31,66 @@ export const lights = async (msg: Message): Promise<void> => {
 
 export const light = async (msg: Message): Promise<void> => {
 	try {
-		const args: string[] = getCommandArgs(msg, Commands.light.prefix);
-		if (args.length < 2) throw Errors.syntax;
-		const lightId: string = args[0];
+		if (!isPHueConfigured()) throw Errors.pHueNotConfigured;
+
+		const args = getCommandArgs(msg, Commands.light.prefix);
+		if (args.length < 2) throw Errors.lightSyntax;
+		const lightId = args[0];
 		if (isNaN(parseInt(lightId))) throw Errors.lightID;
 
-		let state: boolean, brightness: number, brightnessPct: number;
+		const stateURL = `http://${Config.PHUE_BRIDGE_IP}/api/${Config.PHUE_USERNAME}/lights/${lightId}/state`;
+		let state: boolean, brightness: number;
 
 		if (args[1].toLowerCase() === "on") {
 			state = true;
-		} else if (args[1].toLowerCase() == "off") {
+		} else if (args[1].toLowerCase() === "off") {
 			state = false;
 		} else {
-			brightnessPct = parseInt(args[1]);
-			if (isNaN(brightnessPct) || brightnessPct < 1 || brightnessPct > 100) throw Errors.syntax;
-			brightness = Math.max(Math.round(brightnessPct * 2.54), 1);
+			brightness = parseInt(args[1]);
+			if (isNaN(brightness) || brightness < 1 || brightness > 100) throw Errors.lightSyntax;
+			return await setLightBrightness(msg, lightId, brightness, stateURL);
 		}
 
-		if (state !== undefined) return await setLightState(msg, lightId, state);
-		if (brightness !== undefined) return await setLightBrightness(msg, lightId, brightness);
+		return await setLightState(msg, lightId, state, stateURL);
 	} catch (error) {
 		replyWithErrorEmbed(msg, error);
 	}
 };
 
-const setLightState = async (msg: Message, lightId: string, state: boolean): Promise<void> => {
+const setLightState = async (msg: Message, lightId: string, state: boolean, url: string): Promise<void> => {
 	try {
-		const url: string = `http://${config.PHUE_BRIDGE_IP}/api/${config.PHUE_USERNAME}/lights/${lightId}/state`;
-
-		const res: AxiosResponse = await axios.put(url, {
+		const res = await axios.put(url, {
 			on: state
 		});
 
-		if (res.data[0].error) throw res.data[0].error.description;
+		if (res.data[0] && res.data[0].error) throw res.data[0].error.description;
 		replyWithSuccessEmbed(msg, "Success", `Light ${lightId} was switched ${state ? "on" : "off"}!`);
 	} catch (error) {
 		replyWithErrorEmbed(msg, error);
 	}
 };
 
-const setLightBrightness = async (msg: Message, lightId: string, brightness: number): Promise<void> => {
+const setLightBrightness = async (msg: Message, lightId: string, brightnessPct: number, url: string): Promise<void> => {
 	try {
-		const url: string = `http://${config.PHUE_BRIDGE_IP}/api/${config.PHUE_USERNAME}/lights/${lightId}/state`;
-
-		const res: AxiosResponse = await axios.put(url, {
+		const res = await axios.put(url, {
 			on: true,
-			bri: brightness
+			bri: Math.round(brightnessPct * 2.54)
 		});
 
-		if (res.data[0].error) throw res.data[0].error.description;
-		replyWithSuccessEmbed(msg, "Success", `Light ${lightId} was set to ${Math.max(Math.round(brightness / 2.54), 1)}% brightness!`);
+		if (res.data[0] && res.data[0].error) throw res.data[0].error.description;
+		replyWithSuccessEmbed(msg, "Success", `Light ${lightId} was set to ${brightnessPct}% brightness!`);
 	} catch (error) {
 		replyWithErrorEmbed(msg, error);
 	}
 };
 
+const isPHueConfigured = (): boolean => {
+	return Config.PHUE_USERNAME !== undefined && Config.PHUE_BRIDGE_IP !== undefined;
+};
+
 /* eslint-disable no-unused-vars */
 enum Errors {
-	syntax = "Invalid command syntax!\n\nUsage: '!light [id] on/off/[brightness]'\n\nBrightness is on a scale from 1 to 100.",
-	lightID = "Light ID must be an integer!"
+	lightSyntax = "Invalid command syntax!\n\nUsage: `!light [id] on/off/[brightness]`\n\nBrightness is on a scale from 1 to 100.",
+	lightID = "Light ID must be an integer!",
+	pHueNotConfigured = "Not configured properly for Philips Hue integration! Please make sure the `PHUE_USERNAME` and `PHUE_BRIDGE_IP` environment variables are both defined."
 }

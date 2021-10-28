@@ -3,12 +3,12 @@ import { Message } from "discord.js";
 import { replyWithErrorEmbed, replyWithSuccessEmbed } from "../helpers/utility";
 import { Commands } from "../types/constants";
 
-export const help = async (msg: Message): Promise<void> => {
+const help = async (msg: Message): Promise<void> => {
 	try {
 		let output = "";
 
 		for (const cmd of Object.values(Commands)) {
-			output += `**${cmd.prefix}**\n${cmd.description}\n\n`;
+			output += `\`${cmd.prefix}\`\n${cmd.description}\n\n`;
 		}
 
 		replyWithSuccessEmbed(msg, "Commands:", output);
@@ -16,3 +16,5 @@ export const help = async (msg: Message): Promise<void> => {
 		replyWithErrorEmbed(msg, error);
 	}
 };
+
+export default help;
