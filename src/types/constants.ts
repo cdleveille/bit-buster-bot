@@ -8,5 +8,6 @@ export enum Colors {
 export const Commands = {
 	help: { prefix: "!help", description: "Show a list of my commands." },
 	lights: { prefix: "!lights", description: "Show the status of all lights." },
-	light: { prefix: "!light", description: "Turn a light on or off, or adjust the brightness: `!light [id] on/off/[brightness]`" }
+	light: { prefix: "!light", description: "Turn a light on or off, or adjust the brightness: `!light [id] on/off/[brightness]`" },
+	define: { prefix: "!define", description: "Look up the definition of a word: `!light define [word]`" }
 };

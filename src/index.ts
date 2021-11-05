@@ -2,6 +2,7 @@ import { Client, Message } from "discord.js";
 
 import help from "./commands/help";
 import Config from "./helpers/config";
+import { define } from "./commands/define";
 import { lights, light } from "./commands/phue";
 import { commandMatch, replyWithErrorEmbed } from "./helpers/utility";
 import { Commands } from "./types/constants";
@@ -28,8 +29,10 @@ client.on("message", async (msg: Message) => {
 			case commandMatch(msg.content, Commands.light.prefix):
 				light(msg);
 				break;
+			case commandMatch(msg.content, Commands.define.prefix):
+				define(msg);
+				break;
 		}
-
 	} catch (error) {
 		replyWithErrorEmbed(msg, error);
 	}
