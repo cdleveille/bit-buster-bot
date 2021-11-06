@@ -13,21 +13,7 @@ export const define = async (msg: Message): Promise<void> => {
 		const res = await lookUpWord(word);
 		if (!res || res.status !== 200) throw Errors.api;
 
-		let output = "";
-
-		res.data.forEach((data: { word: string, phonetic: string, meanings: any[] }) => {
-			output += `**${data.word} ${data.phonetic ? "[" + data.phonetic + "]" : ""}**\n`;
-			data.meanings.forEach((meaning: { partOfSpeech: string, definitions: any[] }) => {
-				output += `*${meaning.partOfSpeech}*\n`;
-				meaning.definitions.forEach((def: { definition: string }) => {
-					output += `- ${def.definition}\n`;
-				});
-			});
-			output += "\n";
-		});
-
-		replyWithSuccessEmbed(msg, word, output);
-
+		replyWithSuccessEmbed(msg, word, formatOutput(res.data));
 	} catch (error) {
 		replyWithErrorEmbed(msg, error);
 	}
@@ -35,6 +21,23 @@ export const define = async (msg: Message): Promise<void> => {
 
 const lookUpWord = async (word: string): Promise<any> => {
 	return Dictionary.LookUpWord(word);
+};
+
+const formatOutput = (data: any[]): string => {
+	let output = "";
+
+	data.forEach((data: { word: string, phonetic: string, meanings: any[] }) => {
+		output += `**${data.word} ${data.phonetic ? "[" + data.phonetic + "]" : ""}**\n`;
+		data.meanings.forEach((meaning: { partOfSpeech: string, definitions: any[] }) => {
+			output += `*${meaning.partOfSpeech}*\n`;
+			meaning.definitions.forEach((def: { definition: string }) => {
+				output += `- ${def.definition}\n`;
+			});
+		});
+		output += "\n";
+	});
+
+	return output;
 };
 
 /* eslint-disable no-unused-vars */
