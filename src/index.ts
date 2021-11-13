@@ -3,6 +3,7 @@ import { Client, Message } from "discord.js";
 import help from "./commands/help";
 import Config from "./helpers/config";
 import { define } from "./commands/define";
+import { disc } from "./commands/disc";
 import { lights, light } from "./commands/phue";
 import { commandMatch, replyWithErrorEmbed } from "./helpers/utility";
 import { Commands } from "./types/constants";
@@ -31,6 +32,9 @@ client.on("message", async (msg: Message) => {
 				break;
 			case commandMatch(msg.content, Commands.define.prefix):
 				define(msg);
+				break;
+			case commandMatch(msg.content, Commands.disc.prefix):
+				disc(msg);
 				break;
 		}
 	} catch (error) {
