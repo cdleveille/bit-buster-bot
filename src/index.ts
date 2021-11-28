@@ -1,4 +1,4 @@
-import { Client, Message } from "discord.js";
+import { Client, Message, MessageReaction, User } from "discord.js";
 
 import help from "./commands/help";
 import Config from "./helpers/config";
@@ -22,23 +22,33 @@ client.on("message", async (msg: Message) => {
 
 		switch (true) {
 			case commandMatch(msg.content, Commands.help.prefix):
-				help(msg);
+				await help(msg);
 				break;
 			case commandMatch(msg.content, Commands.lights.prefix):
-				lights(msg);
+				await lights(msg);
 				break;
 			case commandMatch(msg.content, Commands.light.prefix):
-				light(msg);
+				await light(msg);
 				break;
 			case commandMatch(msg.content, Commands.define.prefix):
-				define(msg);
+				await define(msg);
 				break;
 			case commandMatch(msg.content, Commands.disc.prefix):
-				disc(msg);
+				await disc(msg);
 				break;
 		}
 	} catch (error) {
 		replyWithErrorEmbed(msg, error);
+	}
+});
+
+client.on("messageReactionAdd", async (react: MessageReaction, user: User) => {
+	try {
+		if (react.message.author.bot && client.user.username === react.message.author.username && react.emoji.name === "🖕") {
+			await react.message.channel.send(`<@${user.id}> 🖕`);
+		}
+	} catch (error) {
+		console.log(error);
 	}
 });
 
