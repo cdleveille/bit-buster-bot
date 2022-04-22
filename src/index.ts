@@ -2,6 +2,7 @@ import { Client, Message, MessageReaction, User } from "discord.js";
 
 import help from "./commands/help";
 import Config from "./helpers/config";
+import { copter } from "./commands/copter";
 import { define } from "./commands/define";
 import { disc } from "./commands/disc";
 import { lights, light } from "./commands/phue";
@@ -35,6 +36,9 @@ client.on("message", async (msg: Message) => {
 				break;
 			case commandMatch(msg.content, Commands.disc.prefix):
 				await disc(msg);
+				break;
+			case commandMatch(msg.content, Commands.copter.prefix):
+				await copter(msg);
 				break;
 		}
 	} catch (error) {
