@@ -6,6 +6,7 @@ import { copter } from "./commands/copter";
 import { define } from "./commands/define";
 import { disc } from "./commands/disc";
 import { lights, light } from "./commands/phue";
+import { clearVideoQueue, play, skip, showQueue as queue } from "./commands/play";
 import { commandMatch, replyWithErrorEmbed } from "./helpers/utility";
 import { Commands } from "./types/constants";
 
@@ -40,6 +41,15 @@ client.on("message", async (msg: Message) => {
 			case commandMatch(msg.content, Commands.copter.prefix):
 				await copter(msg);
 				break;
+			case commandMatch(msg.content, Commands.play.prefix):
+				await play(msg);
+				break;
+			case commandMatch(msg.content, Commands.skip.prefix):
+				await skip(msg);
+				break;
+			case commandMatch(msg.content, Commands.queue.prefix):
+				await queue(msg);
+				break;
 		}
 	} catch (error) {
 		replyWithErrorEmbed(msg, error);
@@ -54,6 +64,10 @@ client.on("messageReactionAdd", async (react: MessageReaction, user: User) => {
 	} catch (error) {
 		console.log(error);
 	}
+});
+
+client.on("voiceStateUpdate", () => {
+	clearVideoQueue();
 });
 
 client.login(Config.BOT_TOKEN).catch(error => {
