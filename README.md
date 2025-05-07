@@ -1,15 +1,17 @@
 # bit-buster-bot
 
-To install dependencies:
+## Setup
 
-```bash
-bun install
-```
-
-To run:
-
-```bash
-bun run index.ts
-```
-
-This project was created using `bun init` in bun v1.2.12. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+1. Install [bun](https://bun.sh)
+2. Install package dependencies:
+   ```bash
+   bun install
+   ```
+3. Create a `.env` file in the root directory and add your Discord bot token:
+   ```
+   BOT_TOKEN=*YOUR_DISCORD_BOT_TOKEN*
+   ```
+4. Start the bot:
+   ```bash
+   bun dev
+   ```
