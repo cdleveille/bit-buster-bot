@@ -1,45 +1,26 @@
 {
   "name": "bit-buster-bot",
-  "version": "1.0.0",
-  "description": "",
-  "engines": {
-    "node": ">=14.x",
-    "npm": "*"
-  },
-  "main": "build/index.js",
+  "type": "module",
+  "module": "index.ts",
   "scripts": {
-    "build": "tsc",
-    "dev": "ts-node-dev --respawn --transpile-only ./src/index.ts",
-    "lint": "eslint --fix --ext .ts,.tsx .",
-    "postinstall": "npm run build",
-    "start": "node ."
+    "prepare": "lefthook install",
+    "lint": "biome lint .",
+    "format": "biome format --write .",
+    "check": "biome check .",
+    "deploy": "flyctl deploy --remote-only --detach --no-cache --config fly.toml",
+    "build": "bun run scripts/build.ts",
+    "build:prod": "bun run scripts/build.ts BUN_ENV=production && workbox injectManifest workbox-config.json",
+    "compile": "bun build --compile --minify --sourcemap src/server/index.ts --outfile main",
+    "dev": "bun run --watch src/server/index.ts",
+    "start": "bun run src/server/index.ts"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/cdleveille/bit-buster-bot.git"
-  },
-  "keywords": [],
-  "author": "Chris Leveille",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/cdleveille/bit-buster-bot/issues"
-  },
-  "homepage": "https://github.com/cdleveille/bit-buster-bot#readme",
   "dependencies": {
-    "@discordjs/opus": "github:discordjs/opus",
-    "axios": "^0.24.0",
-    "discord.js": "^12.5.1",
-    "dotenv": "^10.0.0",
-    "ffmpeg-static": "^4.4.1",
-    "youtube-sr": "^4.1.17",
-    "ytdl-core": "^4.11.0"
+    "discord.js": "^14.19.3"
   },
   "devDependencies": {
-    "@types/axios": "^0.14.0",
-    "@types/node": "^16.11.6",
-    "@typescript-eslint/parser": "^5.2.0",
-    "eslint": "^8.1.0",
-    "ts-node-dev": "^1.1.8",
-    "typescript": "^4.4.4"
+    "@biomejs/biome": "^1.9.4",
+    "@evilmartians/lefthook": "^1.11.12",
+    "@types/bun": "latest",
+    "typescript": "^5.8.3"
   }
 }
