@@ -12,6 +12,5 @@ export const ping: TSlashCommand = {
 	handler: async (int: ChatInputCommandInteraction) => {
 		const reply = int.options.getString("reply") ?? "pong";
 		await int.reply(reply);
-		throw new Error("This is a test error!");
 	}
 };
