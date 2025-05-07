@@ -1,15 +1,23 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { chmod, exists, mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { $ } from "bun";
 
-await mkdir(".git/hooks", { recursive: true });
+const HOOKS_DIR = ".git/hooks";
 
-const hookContent = `#!/bin/sh
+if (!(await exists(".git"))) {
+	console.error("Error: lefthook.ts script must be run from the root folder of git repo");
+	process.exit(1);
+}
+
+await mkdir(HOOKS_DIR, { recursive: true });
+
+const preCommit = `#!/bin/sh
 export PATH="$PWD/node_modules/.bin:$PATH"
 lefthook run pre-commit`;
 
-await writeFile(join(".git/hooks", "pre-commit"), hookContent);
+await writeFile(join(HOOKS_DIR, "pre-commit"), preCommit);
 
-await $`chmod +x .git/hooks/pre-commit`;
+await chmod(join(HOOKS_DIR, "pre-commit"), 0o755);
 
-console.log("lefthook pre-commit hook installed ✅");
+console.log("lefthook hooks installed ✅");
+
+process.exit(0);
