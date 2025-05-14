@@ -14,7 +14,7 @@
     "discord.js": "^14.19.3"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
+    "@biomejs/biome": "1.9.4",
     "@evilmartians/lefthook": "^1.11.12",
     "@types/bun": "latest",
     "typescript": "^5.8.3"
